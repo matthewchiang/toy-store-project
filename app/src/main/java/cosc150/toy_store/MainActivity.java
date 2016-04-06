@@ -30,11 +30,17 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    SearchView sv;
-    ListView lv;
-    ToyList toylist;
+    //SearchView sv;
+    //ListView lv;
+    //ToyList toylist;
     //    String[] toyNames = {"Lego Technic Crawler Crane costs $150","Lego Technic Volvo L350F costs $250","Lego Star Wars Millennium Falcon costs $150"};
-    ArrayAdapter<String> adapter;
+    //ArrayAdapter<String> adapter;
+
+    public static ArrayList<String> toyNameList = new ArrayList<String>();
+    public static ArrayList<Integer> toyPriceList = new ArrayList<Integer>();
+    //public static ArrayList<ImageView> imageList = new ArrayList<ImageView>();
+    public static ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
+
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
@@ -42,9 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        ToyList newToyList;
-
-//        Read toy info
+//        Read toy info, stores in toyNameList, toyPriceList, and text boxes
         readToyInfo();
 
 
@@ -111,14 +115,11 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+
+    //reads info in, saves in ArrayLists
     private void readToyInfo() {
         TextView t = (TextView) findViewById(R.id.allToys);
         String tToPrint = "";
-
-
-        ArrayList<String> toyNameList = new ArrayList<String>();
-        ArrayList<Integer> toyPriceList = new ArrayList<Integer>();
-
         InputStream is = null;
 
         try {
@@ -132,8 +133,26 @@ public class MainActivity extends AppCompatActivity {
 
             for (int i = 0; i < toyList.getNumOfToys(); i++) {
 
+                //String viewToFind = "photo" + String.valueOf(i + 1) + "View";
+                //Log.d("print", "viewtofind: " + viewToFind);
+                //int idToFind = this.getResources().getIdentifier(viewToFind, "id", this.getPackageName());
+                //ImageView iv = (ImageView) findViewById(idToFind);
+
+                Bitmap bmp = toyList.getToy(i).getImage();
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+                byte[] bitmapData = stream.toByteArray();
+
+                // To convert byte array to Bitmap
+                Bitmap bmpCopy = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
+                bitmapList.add(bmpCopy);
+                //ImageView iv = new ImageView(this);
+                //iv.setImageBitmap(bmpCopy);
+
+                //imageList.add(iv);
                 toyNameList.add(toyList.getToy(i).getToyName());
                 toyPriceList.add(toyList.getToy(i).getPrice());
+
                 tToPrint += toyNameList.get(i) + " costs $" + toyPriceList.get(i) + "\n";
             }
             t.setText(tToPrint);

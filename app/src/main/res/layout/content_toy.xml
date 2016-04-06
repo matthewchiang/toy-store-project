@@ -70,7 +70,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="0.6"
                         android:scaleType="fitCenter"
-                        android:tag="image0" />
+                        android:tag="1" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -95,7 +95,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="0.6"
                         android:scaleType="fitCenter"
-                        android:tag="image0" />
+                        android:tag="2" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -138,12 +138,10 @@
             android:id="@+id/checkoutButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignTop="@+id/cancelButton"
-            android:layout_marginEnd="18dp"
-            android:layout_marginRight="18dp"
-            android:layout_toLeftOf="@+id/shoppingCartView"
-            android:layout_toStartOf="@+id/shoppingCartView"
-            android:text="Checkout" />
+            android:text="Checkout"
+            android:layout_alignParentBottom="true"
+            android:layout_toRightOf="@+id/cancelButton"
+            android:layout_toEndOf="@+id/cancelButton" />
 
         <Button
             android:id="@+id/cancelButton"
@@ -161,7 +159,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
-            android:text="Price: $" />
+            android:text="Price: $0" />
 
         <TextView
             android:id="@+id/numItems"
@@ -171,7 +169,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_marginBottom="18dp"
-            android:text="Number of items: " />
+            android:text="Number of items: 0" />
     </RelativeLayout>
 
 </LinearLayout>

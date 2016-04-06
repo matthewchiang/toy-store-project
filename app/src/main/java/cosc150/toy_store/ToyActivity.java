@@ -15,8 +15,6 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -42,30 +40,66 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class ToyActivity extends AppCompatActivity {
-    ArrayList<String> toyNameList;
-    ArrayList<Integer> toyPriceList;
-    ToyList toylist;
+
+    //ArrayList<String> toyNameList = new ArrayList<String>();
+    //ArrayList<Integer> toyPriceList = new ArrayList<Integer>();
+    //ArrayList<ImageView> imageList = new ArrayList<ImageView>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Log.d("print", "In ToyActivity: oncreate");
         setContentView(R.layout.activity_toy);
 
-        ToyList newToyList;
-
 //        Read toy info
-        readToyInfo();
+        //readToyInfo();
 
-        ImageView photo1View = (ImageView) findViewById(R.id.photo1View);
+        //ImageView photo1View = (ImageView) findViewById(R.id.photo1View);
 //        ImageView photo2View = (ImageView) findViewById(R.id.photo2View);
 //        photo2View.setImageBitmap(t1.getImage());
 //        ImageView photo3View = (ImageView) findViewById(R.id.photo3View);
+
 //
-        photo1View.setOnLongClickListener(longListen);
+        //photo1View.setOnLongClickListener(longListen);
 //        photo2View.setOnLongClickListener(longListen);
 //        photo3View.setOnLongClickListener(longListen);
+        //findViewById(R.id.shoppingCartView).setOnDragListener(DropListener);
+
+        for (int i = 0; i < MainActivity.bitmapList.size(); i++) {
+            String viewToFind = "photo" + String.valueOf(i + 1) + "View";
+            int idToFind = this.getResources().getIdentifier(viewToFind, "id", this.getPackageName());
+            ImageView iv = (ImageView) findViewById(idToFind);
+            iv.setImageBitmap(MainActivity.bitmapList.get(i));
+            iv.setOnLongClickListener(longListen);
+        }
+
         findViewById(R.id.shoppingCartView).setOnDragListener(DropListener);
+
+        findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TextView resetItems = (TextView) findViewById(R.id.numItems);
+            resetItems.setText("Number of items: 0");
+                TextView resetPrice = (TextView) findViewById(R.id.shoppingCartPrice);
+                resetPrice.setText("Price: $0");
+            }
+        });
+
+        findViewById(R.id.checkoutButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextView resetItems = (TextView) findViewById(R.id.numItems);
+                resetItems.setText("Number of items: 0");
+                TextView resetPrice = (TextView) findViewById(R.id.shoppingCartPrice);
+                String strPrice = (String) resetPrice.getText();
+                strPrice = strPrice.replace("Price: ", "");
+                resetPrice.setText("Price: $0");
+                Toast.makeText(getApplicationContext(), "Now charging " + strPrice + " to your " +
+                        "credit card. Thank you!", Toast.LENGTH_LONG).show();
+            }
+
+        });
     }
 
     View.OnLongClickListener longListen = new View.OnLongClickListener() {
@@ -73,7 +107,7 @@ public class ToyActivity extends AppCompatActivity {
         public boolean onLongClick(View v) {
             ImageView pic = (ImageView) v;
             Log.d("print", "Image clicked - " + pic.getId());
-            Toast.makeText(ToyActivity.this, "Image clicked - " + pic.getId(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(ToyActivity.this, "Image clicked - " + pic.getTag(), Toast.LENGTH_SHORT).show();
             ClipData data = ClipData.newPlainText("", "");
             View.DragShadowBuilder myShadowBuilder = new MyShadowBuilder(v);
 
@@ -118,15 +152,15 @@ public class ToyActivity extends AppCompatActivity {
 
                 case DragEvent.ACTION_DRAG_ENTERED:
                     Log.d("Drag event", "Entered shopping cart");
-                    Toast.makeText(getApplicationContext(), "Entering", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Entering", Toast.LENGTH_SHORT).show();
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
                     Log.d("Drag event", "Exited");
-                    Toast.makeText(getApplicationContext(), "Exiting", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Exiting", Toast.LENGTH_SHORT).show();
                     break;
                 case DragEvent.ACTION_DROP:
                     Log.d("Drag event", "Dropped");
-                    Toast.makeText(getApplicationContext(), "You want to purchase a toy.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "You want to purchase a toy.", Toast.LENGTH_SHORT).show();
                     updateCart(dragView);
                     break;
             }
@@ -142,8 +176,8 @@ public class ToyActivity extends AppCompatActivity {
         Log.d("print", "tag is now " + tag);
         int toyNum = Integer.parseInt(tag);
         Log.d("print", "Toy number is " + toyNum);
-        Log.d("print", toyNameList.get(toyNum) + " costs " + toyPriceList.get(toyNum));
-        Toast.makeText(getApplicationContext(), toyNameList.get(toyNum) + " costs " + toyPriceList.get(toyNum), Toast.LENGTH_LONG).show();
+        Log.d("print", MainActivity.toyNameList.get(toyNum) + " costs " + MainActivity.toyPriceList.get(toyNum));
+        Toast.makeText(getApplicationContext(), MainActivity.toyNameList.get(toyNum) + " costs $" + MainActivity.toyPriceList.get(toyNum), Toast.LENGTH_SHORT).show();
 
         // Update price
         int newPrice;
@@ -155,11 +189,11 @@ public class ToyActivity extends AppCompatActivity {
             //If there is already a toy in the basket
             Log.d("print", "There's a toy in the basket");
             newPrice = Integer.parseInt(priceText);
-            newPrice += toyPriceList.get(toyNum);
+            newPrice += MainActivity.toyPriceList.get(toyNum);
         } else {
             Log.d("print", "No toys yet");
             //If no toys in the basket
-            newPrice = toyPriceList.get(toyNum);
+            newPrice = MainActivity.toyPriceList.get(toyNum);
         }
         Log.d("print", "New price is " + newPrice);
         price.setText("Price: $" + Integer.toString(newPrice));
@@ -177,14 +211,53 @@ public class ToyActivity extends AppCompatActivity {
         }
         Log.d("print", "Num items: " + newNumItems);
         numItems.setText("Number of items: " + Integer.toString(newNumItems));
+
     }
 
+    //Log.d("print", "tag is " + tag);
+    //tag = tag.replace("image", "");
+    //Log.d("print", "tag is now " + tag);
+    //Log.d("print", "Toy number is " + toyNum + 1);
+    //Log.d("print", toyNameList.get(toyNum) + " costs " + toyPriceList.get(toyNum));
 
-    private void readToyInfo() {
-        String tToPrint = "";
+    // Update price
+       /* TextView price = (TextView) findViewById(R.id.shoppingCartPrice);
+        String priceText = (String) price.getText();
+        //priceText = priceText.replace("Price: $", "");
+        priceText = priceText.substring(priceText.indexOf('$')+1);
+        int newPrice = Integer.parseInt(priceText);
+        Log.d("print", "priceText:" + priceText);
+        if (priceText != "") {
+            //If there is already a toy in the basket
+            Log.d("print", "There's a toy in the basket");
+            //newPrice = Integer.parseInt(priceText);
+            //newPrice += toyPriceList.get(toyNum);
+        } else {
+            Log.d("print", "No toys yet");
+            //If no toys in the basket
+            //newPrice = toyPriceList.get(toyNum);
+        }
+        newPrice += toyPriceList.get(toyNum);
+        Log.d("print", "New price is " + newPrice);
+        price.setText("Price: $" + Integer.toString(newPrice));*/
 
-        toyNameList = new ArrayList<String>();
-        toyPriceList = new ArrayList<Integer>();
+    //Update number of items
+        /*int newNumItems;
+        TextView numItems = (TextView) findViewById(R.id.numItems);
+        String numItemsText = (String) numItems.getText();
+        numItemsText = numItemsText.replace("Number of items: ", "");
+        if (numItemsText != "") {
+            newNumItems = Integer.parseInt(numItemsText);
+            newNumItems += 1;
+        } else {
+            newNumItems = 1;
+        }
+        Log.d("print", "Num items: " + newNumItems);
+        numItems.setText("Number of items: " + Integer.toString(newNumItems));*/
+    //}
+
+
+    /*private void readToyInfo() {
 
         InputStream is = null;
 
@@ -204,9 +277,6 @@ public class ToyActivity extends AppCompatActivity {
                 int idToFind = this.getResources().getIdentifier(viewToFind, "id", this.getPackageName());
 
 
-                /**************NEW CODE****************************
-                 * Goes inside For loop to load everything from file/URL
-                 */
                 Bitmap bmp = toyList.getToy(i).getImage();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
@@ -218,19 +288,16 @@ public class ToyActivity extends AppCompatActivity {
                 ImageView iv = (ImageView) findViewById(idToFind);
                 iv.setImageBitmap(bmpCopy);
 
-                //END NEW CODE*******************************************
-
-                toyNameList.add(toyList.getToy(i).getToyName());
-                toyPriceList.add(toyList.getToy(i).getPrice());
-//                tToPrint += toyNameList.get(i) + " costs $"+ toyPriceList.get(i) + "\n";
+                MainActivity.imageList.add(iv);
+                MainActivity.toyNameList.add(toyList.getToy(i).getToyName());
+                MainActivity.toyPriceList.add(toyList.getToy(i).getPrice());
 
             }
-//            t.setText(tToPrint);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 //    private void readToyInfo() {
 //        try {
