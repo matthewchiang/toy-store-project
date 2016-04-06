@@ -26,58 +26,38 @@
         android:textAlignment="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="#410875"
-        android:textSize="50dp" />
+        android:textSize="50sp" />
 
     <TextView
         android:id="@+id/searchText"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/toySearchView"
-        android:layout_alignLeft="@+id/welcomeText"
-        android:layout_alignStart="@+id/welcomeText"
-        android:layout_marginBottom="49dp"
         android:text="Search for a toy:"
-        android:textAppearance="?android:attr/textAppearanceLarge" />
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_above="@+id/toySearchView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-    <SearchView
-        android:id="@+id/toySearchView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/welcomeText"
-        android:layout_alignStart="@+id/welcomeText"
-        android:layout_below="@+id/welcomeText"
-        android:layout_marginTop="73dp" />
 
     <Button
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/searchText"
-        android:layout_centerHorizontal="true"
         android:nestedScrollingEnabled="false"
         android:onClick="viewToysOnClick"
         android:text="View All Toys"
         android:textColor="#403C39"
-        android:textSize="20dp" />
+        android:textSize="20sp"
+        android:layout_above="@+id/searchText"
+        android:layout_centerHorizontal="true" />
 
-    <ScrollView
-        android:layout_width="wrap_content"
+    <SearchView
+        android:id="@+id/toySearchView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollViewMain"
-        android:layout_below="@+id/searchText"
+        android:layout_centerVertical="true"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentBottom="true">
-
-        <LinearLayout
-            android:id="@+id/linearLayoutMain"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-        </LinearLayout>
-    </ScrollView>
+        android:layout_alignParentStart="true" />
 
 
 </RelativeLayout>

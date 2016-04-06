@@ -13,7 +13,7 @@
     tools:showIn="@layout/activity_checkout">
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Complete Your Purchase"
@@ -25,10 +25,12 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
         android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignRight="@+id/scrollView2"
         android:layout_alignEnd="@+id/scrollView2" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Link to Map of Stores"
         android:id="@+id/mapURL"
@@ -40,7 +42,7 @@
         android:layout_alignEnd="@+id/orderButton" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Order Online"
         android:id="@+id/orderButton"
@@ -52,7 +54,7 @@
         android:layout_alignEnd="@+id/scrollView2" />
 
     <ScrollView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView2"
         android:layout_alignParentRight="true"

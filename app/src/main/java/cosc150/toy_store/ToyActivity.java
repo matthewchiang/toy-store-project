@@ -68,9 +68,12 @@ public class ToyActivity extends AppCompatActivity {
 
             TextView name = new TextView(this);
             name.setText(MainActivity.toyNameList.get(i));
+            name.setTextSize(32);
 
             TextView price = new TextView(this);
             price.setText("$" + Integer.toString(MainActivity.toyPriceList.get(i)));
+            price.setTextSize(32);
+
 
             linearLayout1.addView(name);
             linearLayout1.addView(price);
@@ -109,7 +112,6 @@ public class ToyActivity extends AppCompatActivity {
         public boolean onLongClick(View v) {
             ImageView pic = (ImageView) v;
             Log.d("print", "Image clicked - " + pic.getId());
-            Toast.makeText(ToyActivity.this, "Image clicked - " + pic.getTag(), Toast.LENGTH_SHORT).show();
             ClipData data = ClipData.newPlainText("", "");
             View.DragShadowBuilder myShadowBuilder = new MyShadowBuilder(v);
 
@@ -154,15 +156,12 @@ public class ToyActivity extends AppCompatActivity {
 
                 case DragEvent.ACTION_DRAG_ENTERED:
                     //Log.d("Drag event", "Entered shopping cart");
-//                    Toast.makeText(getApplicationContext(), "Entering", Toast.LENGTH_SHORT).show();
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
                     //Log.d("Drag event", "Exited");
-//                    Toast.makeText(getApplicationContext(), "Exiting", Toast.LENGTH_SHORT).show();
                     break;
                 case DragEvent.ACTION_DROP:
                     //Log.d("Drag event", "Dropped");
-                    Toast.makeText(getApplicationContext(), "You want to purchase a toy.", Toast.LENGTH_SHORT).show();
                     updateCart(dragView);
                     break;
             }

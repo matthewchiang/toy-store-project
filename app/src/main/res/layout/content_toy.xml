@@ -24,7 +24,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:id="@+id/linearLayout1">
         </LinearLayout>
 
@@ -41,7 +41,7 @@
             android:layout_height="128dp"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_gravity="right"
+            android:layout_gravity="end"
             android:adjustViewBounds="true"
             android:scaleType="centerInside"
             android:src="@raw/shoppingcart" />
