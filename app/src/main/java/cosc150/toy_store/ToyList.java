@@ -29,6 +29,7 @@ public class ToyList {
         }
     }
 
+    public void removeAllToys() { toyList.clear(); }
     public void addToy(Toy toy) {
         toyList.add(toy);
     }

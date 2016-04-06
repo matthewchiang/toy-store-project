@@ -29,13 +29,11 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-
     //SearchView sv;
     //ListView lv;
-    //ToyList toylist;
     //    String[] toyNames = {"Lego Technic Crawler Crane costs $150","Lego Technic Volvo L350F costs $250","Lego Star Wars Millennium Falcon costs $150"};
     //ArrayAdapter<String> adapter;
-
+    public static ToyList toyList;
     public static ArrayList<String> toyNameList = new ArrayList<String>();
     public static ArrayList<Integer> toyPriceList = new ArrayList<Integer>();
     //public static ArrayList<ImageView> imageList = new ArrayList<ImageView>();
@@ -128,7 +126,7 @@ public class MainActivity extends AppCompatActivity {
             byte[] buffer = new byte[size]; //declare the size of the byte array with size of the file
             is.read(buffer); //read file
             is.close(); //close file
-            ToyList toyList = new ToyList(buffer, size);
+            toyList = new ToyList(buffer, size);
             System.out.println("There are " + toyList.getNumOfToys() + " toys.");
 
             for (int i = 0; i < toyList.getNumOfToys(); i++) {

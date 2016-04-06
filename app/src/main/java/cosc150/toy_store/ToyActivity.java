@@ -41,9 +41,9 @@ import java.util.ArrayList;
 
 public class ToyActivity extends AppCompatActivity {
 
-    //ArrayList<String> toyNameList = new ArrayList<String>();
-    //ArrayList<Integer> toyPriceList = new ArrayList<Integer>();
-    //ArrayList<ImageView> imageList = new ArrayList<ImageView>();
+    public static int numItemsInCart = 0;
+    public static int priceOfItems = 0;
+    public static ToyList selectedToys = new ToyList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,10 +79,14 @@ public class ToyActivity extends AppCompatActivity {
         findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            numItemsInCart=0;
+            priceOfItems=0;
+            selectedToys.removeAllToys();
+
             TextView resetItems = (TextView) findViewById(R.id.numItems);
-            resetItems.setText("Number of items: 0");
+            resetItems.setText("Number of items: "+Integer.toString(numItemsInCart));
                 TextView resetPrice = (TextView) findViewById(R.id.shoppingCartPrice);
-                resetPrice.setText("Price: $0");
+                resetPrice.setText("Price: $"+Double.toString(priceOfItems));
             }
         });
 
@@ -97,6 +101,8 @@ public class ToyActivity extends AppCompatActivity {
                 resetPrice.setText("Price: $0");
                 Toast.makeText(getApplicationContext(), "Now charging " + strPrice + " to your " +
                         "credit card. Thank you!", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(ToyActivity.this, CheckoutActivity.class);
+                startActivity(intent);
             }
 
         });
@@ -152,11 +158,11 @@ public class ToyActivity extends AppCompatActivity {
 
                 case DragEvent.ACTION_DRAG_ENTERED:
                     Log.d("Drag event", "Entered shopping cart");
-                    Toast.makeText(getApplicationContext(), "Entering", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Entering", Toast.LENGTH_SHORT).show();
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
                     Log.d("Drag event", "Exited");
-                    Toast.makeText(getApplicationContext(), "Exiting", Toast.LENGTH_SHORT).show();
+//                    Toast.makeText(getApplicationContext(), "Exiting", Toast.LENGTH_SHORT).show();
                     break;
                 case DragEvent.ACTION_DROP:
                     Log.d("Drag event", "Dropped");
@@ -179,38 +185,18 @@ public class ToyActivity extends AppCompatActivity {
         Log.d("print", MainActivity.toyNameList.get(toyNum) + " costs " + MainActivity.toyPriceList.get(toyNum));
         Toast.makeText(getApplicationContext(), MainActivity.toyNameList.get(toyNum) + " costs $" + MainActivity.toyPriceList.get(toyNum), Toast.LENGTH_SHORT).show();
 
+        Toy newToy = MainActivity.toyList.getToy(toyNum);
+        selectedToys.addToy(newToy);
+
         // Update price
-        int newPrice;
-        TextView price = (TextView) findViewById(R.id.shoppingCartPrice);
-        String priceText = (String) price.getText();
-        priceText = priceText.replace("Price: $", "");
-        Log.d("print", "priceText:" + priceText);
-        if (priceText != "") {
-            //If there is already a toy in the basket
-            Log.d("print", "There's a toy in the basket");
-            newPrice = Integer.parseInt(priceText);
-            newPrice += MainActivity.toyPriceList.get(toyNum);
-        } else {
-            Log.d("print", "No toys yet");
-            //If no toys in the basket
-            newPrice = MainActivity.toyPriceList.get(toyNum);
-        }
-        Log.d("print", "New price is " + newPrice);
-        price.setText("Price: $" + Integer.toString(newPrice));
+        TextView priceView = (TextView) findViewById(R.id.shoppingCartPrice);
+        priceOfItems += MainActivity.toyPriceList.get(toyNum);
+        priceView.setText("Price: $" + Integer.toString(priceOfItems));
 
         //Update number of items
-        int newNumItems;
         TextView numItems = (TextView) findViewById(R.id.numItems);
-        String numItemsText = (String) numItems.getText();
-        numItemsText = numItemsText.replace("Number of items: ", "");
-        if (numItemsText != "") {
-            newNumItems = Integer.parseInt(numItemsText);
-            newNumItems += 1;
-        } else {
-            newNumItems = 1;
-        }
-        Log.d("print", "Num items: " + newNumItems);
-        numItems.setText("Number of items: " + Integer.toString(newNumItems));
+        numItemsInCart+=1;
+        numItems.setText("Number of items: " + Integer.toString(numItemsInCart));
 
     }
 
