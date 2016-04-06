@@ -22,6 +22,10 @@ import android.view.DragEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -48,31 +52,31 @@ public class ToyActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_toy);
+        LinearLayout linearLayout1 = (LinearLayout) findViewById(R.id.linearLayout1);
 
         Log.d("print", "In ToyActivity: oncreate");
-        setContentView(R.layout.activity_toy);
 
 //        Read toy info
         //readToyInfo();
 
-        //ImageView photo1View = (ImageView) findViewById(R.id.photo1View);
-//        ImageView photo2View = (ImageView) findViewById(R.id.photo2View);
-//        photo2View.setImageBitmap(t1.getImage());
-//        ImageView photo3View = (ImageView) findViewById(R.id.photo3View);
-
-//
-        //photo1View.setOnLongClickListener(longListen);
-//        photo2View.setOnLongClickListener(longListen);
-//        photo3View.setOnLongClickListener(longListen);
-        //findViewById(R.id.shoppingCartView).setOnDragListener(DropListener);
-
         for (int i = 0; i < MainActivity.bitmapList.size(); i++) {
-            String viewToFind = "photo" + String.valueOf(i + 1) + "View";
-            int idToFind = this.getResources().getIdentifier(viewToFind, "id", this.getPackageName());
-            ImageView iv = (ImageView) findViewById(idToFind);
-            iv.setImageBitmap(MainActivity.bitmapList.get(i));
-            iv.setOnLongClickListener(longListen);
+            ImageView pic = new ImageView(this);
+            pic.setImageBitmap(MainActivity.bitmapList.get(i));
+            pic.setOnLongClickListener(longListen);
+            pic.setTag(i);
+
+            TextView name = new TextView(this);
+            name.setText(MainActivity.toyNameList.get(i));
+
+            TextView price = new TextView(this);
+            price.setText("$" + Integer.toString(MainActivity.toyPriceList.get(i)));
+
+            linearLayout1.addView(name);
+            linearLayout1.addView(price);
+            linearLayout1.addView(pic);
         }
+
 
         findViewById(R.id.shoppingCartView).setOnDragListener(DropListener);
 
@@ -85,22 +89,14 @@ public class ToyActivity extends AppCompatActivity {
 
             TextView resetItems = (TextView) findViewById(R.id.numItems);
             resetItems.setText("Number of items: "+Integer.toString(numItemsInCart));
-                TextView resetPrice = (TextView) findViewById(R.id.shoppingCartPrice);
-                resetPrice.setText("Price: $"+Double.toString(priceOfItems));
+            TextView resetPrice = (TextView) findViewById(R.id.shoppingCartPrice);
+            resetPrice.setText("Price: $" + Integer.toString(priceOfItems));
             }
         });
 
         findViewById(R.id.checkoutButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TextView resetItems = (TextView) findViewById(R.id.numItems);
-                resetItems.setText("Number of items: 0");
-                TextView resetPrice = (TextView) findViewById(R.id.shoppingCartPrice);
-                String strPrice = (String) resetPrice.getText();
-                strPrice = strPrice.replace("Price: ", "");
-                resetPrice.setText("Price: $0");
-                Toast.makeText(getApplicationContext(), "Now charging " + strPrice + " to your " +
-                        "credit card. Thank you!", Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(ToyActivity.this, CheckoutActivity.class);
                 startActivity(intent);
             }
@@ -157,15 +153,15 @@ public class ToyActivity extends AppCompatActivity {
             switch (event.getAction()) {
 
                 case DragEvent.ACTION_DRAG_ENTERED:
-                    Log.d("Drag event", "Entered shopping cart");
+                    //Log.d("Drag event", "Entered shopping cart");
 //                    Toast.makeText(getApplicationContext(), "Entering", Toast.LENGTH_SHORT).show();
                     break;
                 case DragEvent.ACTION_DRAG_EXITED:
-                    Log.d("Drag event", "Exited");
+                    //Log.d("Drag event", "Exited");
 //                    Toast.makeText(getApplicationContext(), "Exiting", Toast.LENGTH_SHORT).show();
                     break;
                 case DragEvent.ACTION_DROP:
-                    Log.d("Drag event", "Dropped");
+                    //Log.d("Drag event", "Dropped");
                     Toast.makeText(getApplicationContext(), "You want to purchase a toy.", Toast.LENGTH_SHORT).show();
                     updateCart(dragView);
                     break;

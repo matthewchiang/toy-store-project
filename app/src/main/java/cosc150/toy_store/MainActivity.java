@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity {
     public static ToyList toyList;
     public static ArrayList<String> toyNameList = new ArrayList<String>();
     public static ArrayList<Integer> toyPriceList = new ArrayList<Integer>();
-    //public static ArrayList<ImageView> imageList = new ArrayList<ImageView>();
     public static ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
 
 
@@ -116,8 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
     //reads info in, saves in ArrayLists
     private void readToyInfo() {
-        TextView t = (TextView) findViewById(R.id.allToys);
-        String tToPrint = "";
+        //TextView t = (TextView) findViewById(R.id.allToys);
+        //String tToPrint = "";
         InputStream is = null;
 
         try {
@@ -143,17 +142,14 @@ public class MainActivity extends AppCompatActivity {
 
                 // To convert byte array to Bitmap
                 Bitmap bmpCopy = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
-                bitmapList.add(bmpCopy);
-                //ImageView iv = new ImageView(this);
-                //iv.setImageBitmap(bmpCopy);
 
-                //imageList.add(iv);
+                bitmapList.add(bmpCopy);
                 toyNameList.add(toyList.getToy(i).getToyName());
                 toyPriceList.add(toyList.getToy(i).getPrice());
 
-                tToPrint += toyNameList.get(i) + " costs $" + toyPriceList.get(i) + "\n";
+                //tToPrint += toyNameList.get(i) + " costs $" + toyPriceList.get(i) + "\n";
             }
-            t.setText(tToPrint);
+            //t.setText(tToPrint);
 
         } catch (IOException e) {
             e.printStackTrace();

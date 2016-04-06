@@ -13,35 +13,60 @@
     tools:showIn="@layout/activity_checkout">
 
     <TextView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="Complete Your Purchase"
         android:id="@+id/completePurchaseTextView"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentStart="true"
         android:textSize="30dp"
         android:textAlignment="center"
-        android:textColor="#470041" />
+        android:textColor="#470041"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignEnd="@+id/scrollView2" />
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Link to Map of Stores"
         android:id="@+id/mapURL"
+        android:onClick="openURL"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="101dp"
-        android:onClick="openURL" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/orderButton"
+        android:layout_alignEnd="@+id/orderButton" />
 
-    <TextView
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/selectedToysView"
-        android:layout_marginTop="54dp"
+        android:text="Order Online"
+        android:id="@+id/orderButton"
+        android:onClick="checkout"
+        android:layout_above="@+id/mapURL"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignRight="@+id/scrollView2"
+        android:layout_alignEnd="@+id/scrollView2" />
+
+    <ScrollView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/scrollView2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:layout_below="@+id/completePurchaseTextView"
-        android:layout_alignLeft="@+id/mapURL"
-        android:layout_alignStart="@+id/mapURL"
-        android:textSize="30dp" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/orderButton">
+
+        <LinearLayout
+            android:id="@+id/linearLayoutCheckout"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"></LinearLayout>
+    </ScrollView>
+
 </RelativeLayout>
