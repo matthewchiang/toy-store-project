@@ -1,18 +1,21 @@
 package cosc150.toy_store;
 
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-public class ToyList {
+public class ToyList implements Parcelable {
 
     private ArrayList<Toy> toyList = new ArrayList<Toy>();
 
-    public ToyList() {
-    }
+    public ToyList(){ }
 
     public ToyList(byte[] byteArray, int length) {
         ByteBuffer buffer = ByteBuffer.wrap(byteArray);
@@ -29,7 +32,10 @@ public class ToyList {
         }
     }
 
-    public void removeAllToys() { toyList.clear(); }
+    public void removeAllToys() {
+        toyList.clear();
+    }
+
     public void addToy(Toy toy) {
         toyList.add(toy);
     }
@@ -90,4 +96,32 @@ public class ToyList {
 
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Bundle b = new Bundle();
+        b.putParcelableArrayList("toyList", toyList);
+        dest.writeBundle(b);
+    }
+
+    public static final Parcelable.Creator CREATOR
+            = new Parcelable.Creator() {
+        public ToyList createFromParcel(Parcel in) {
+            return new ToyList(in);
+        }
+
+        @Override
+        public Object[] newArray(int size) {
+            return new Object[size];
+        }
+    };
+
+    public ToyList(Parcel in) {
+        Bundle b = in.readBundle(Toy.class.getClassLoader());
+        this.toyList = b.getParcelableArrayList("toyList");
+    }
 }

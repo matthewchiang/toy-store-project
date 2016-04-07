@@ -15,23 +15,31 @@ import android.widget.Toast;
 
 public class CheckoutActivity extends AppCompatActivity {
 
+    private static ToyList selectedToys = null;
+    private int totalPrice=0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_checkout);
         LinearLayout linearLayoutCheckout = (LinearLayout) findViewById(R.id.linearLayoutCheckout);
 
-        for (int i = 0; i< ToyActivity.numItemsInCart; i++)
+        Intent intent = getIntent();
+        selectedToys = intent.getExtras().getParcelable("selectedToyList");
+        totalPrice = intent.getIntExtra("totalPrice", 0);
+
+        for (int i = 0; i< selectedToys.getNumOfToys(); i++)
         {
             TextView thisToy = new TextView(this);
-            String toyName = ToyActivity.selectedToys.getToy(i).getToyName();
+            String toyName = selectedToys.getToy(i).getToyName();
             thisToy.setText(toyName);
             linearLayoutCheckout.addView(thisToy);
         }
 
-        TextView totalPrice = new TextView(this);
-        totalPrice.setText("\nTotal price of " + ToyActivity.numItemsInCart + " item(s): $" + ToyActivity.priceOfItems);
-        linearLayoutCheckout.addView(totalPrice);
+        TextView totalPriceView = new TextView(this);
+
+        totalPriceView.setText("\nTotal price of " + selectedToys.getNumOfToys() + " item(s): $" + Integer.toString(totalPrice));
+        linearLayoutCheckout.addView(totalPriceView);
     }
 
     public void openURL(View view) {
@@ -40,7 +48,7 @@ public class CheckoutActivity extends AppCompatActivity {
     }
 
     public void checkout(View view) {
-        Toast.makeText(getApplicationContext(), "Now charging " + ToyActivity.priceOfItems + " to your " +
+        Toast.makeText(getApplicationContext(), "Now charging " + totalPrice + " to your " +
                 "credit card. Thank you!", Toast.LENGTH_LONG).show();
 
     }

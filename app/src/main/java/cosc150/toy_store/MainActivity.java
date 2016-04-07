@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +20,10 @@ import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.common.api.GoogleApiClient;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,14 +34,18 @@ import java.net.URL;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
-    //SearchView sv;
-    //ListView lv;
-    //    String[] toyNames = {"Lego Technic Crawler Crane costs $150","Lego Technic Volvo L350F costs $250","Lego Star Wars Millennium Falcon costs $150"};
-    //ArrayAdapter<String> adapter;
-    public static ToyList toyList;
+    SearchView sv;
+    ListView lv;
+    ArrayAdapter<String> adapter;
+    public static ToyList toyList = null;
     public static ArrayList<String> toyNameList = new ArrayList<String>();
     public static ArrayList<Integer> toyPriceList = new ArrayList<Integer>();
     public static ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -48,40 +57,45 @@ public class MainActivity extends AppCompatActivity {
 //        Read toy info, stores in toyNameList, toyPriceList, and text boxes
         readToyInfo();
 
+        String [] toyNamesArray = new String[toyNameList.size()];
+        toyNamesArray = toyNameList.toArray(toyNamesArray);
+
+        Log.d("print", "Created toynamesarray");
 
 //        Set up the actionlisteners
-//        lv = (ListView) findViewById(R.id.toyListView);
-//        sv =  (SearchView) findViewById(R.id.toySearchView);
-//
-//        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, toyNames);
-//        lv.setAdapter(adapter);
-//
-//        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-//
-//            @Override
-//            public boolean onQueryTextSubmit(String text){
-//                return false;
-//            }
-//
-//            @Override
-//            public boolean onQueryTextChange(String text) {
-//                adapter.getFilter().filter(text);
-//                return false;
-//            }
-//        });
-//
-//        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Object o = lv.getItemAtPosition(position);
-//                String toy = o.toString();
-//                Toast.makeText(getApplicationContext(), "You have chosen the item " + toy, Toast.LENGTH_LONG).show();
-//
-//                Intent intent = new Intent(MainActivity.this, ToyActivity.class);
-//                startActivity(intent);
-//            }
-//        });
+        lv = (ListView) findViewById(R.id.toyListView);
+        sv =  (SearchView) findViewById(R.id.toySearchView);
 
+
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, toyNamesArray);
+        lv.setAdapter(adapter);
+
+        sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+            @Override
+            public boolean onQueryTextSubmit(String text){
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String text) {
+                adapter.getFilter().filter(text);
+                return false;
+            }
+        });
+
+        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                Toast.makeText(getApplicationContext(), "Add items to basket in the next page", Toast.LENGTH_LONG).show();
+
+            }
+        });
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
     }
 
     @Override
@@ -108,15 +122,17 @@ public class MainActivity extends AppCompatActivity {
 
     public void viewToysOnClick(View view) {
         Log.d("print", "onclick");
-        Intent intent = new Intent(MainActivity.this, ToyActivity.class);
+        Intent intent = new Intent(getBaseContext(), ToyActivity.class);
+        intent.putExtra("toylist", toyList);
+        Log.d("print", "Put the toylist in the intent");
         startActivity(intent);
+
     }
 
 
     //reads info in, saves in ArrayLists
     private void readToyInfo() {
-        //TextView t = (TextView) findViewById(R.id.allToys);
-        //String tToPrint = "";
+
         InputStream is = null;
 
         try {
@@ -130,11 +146,6 @@ public class MainActivity extends AppCompatActivity {
 
             for (int i = 0; i < toyList.getNumOfToys(); i++) {
 
-                //String viewToFind = "photo" + String.valueOf(i + 1) + "View";
-                //Log.d("print", "viewtofind: " + viewToFind);
-                //int idToFind = this.getResources().getIdentifier(viewToFind, "id", this.getPackageName());
-                //ImageView iv = (ImageView) findViewById(idToFind);
-
                 Bitmap bmp = toyList.getToy(i).getImage();
                 ByteArrayOutputStream stream = new ByteArrayOutputStream();
                 bmp.compress(Bitmap.CompressFormat.JPEG, 100, stream);
@@ -143,60 +154,53 @@ public class MainActivity extends AppCompatActivity {
                 // To convert byte array to Bitmap
                 Bitmap bmpCopy = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
 
-                bitmapList.add(bmpCopy);
+//                bitmapList.add(bmpCopy);
                 toyNameList.add(toyList.getToy(i).getToyName());
-                toyPriceList.add(toyList.getToy(i).getPrice());
-
-                //tToPrint += toyNameList.get(i) + " costs $" + toyPriceList.get(i) + "\n";
+//                toyPriceList.add(toyList.getToy(i).getPrice());
             }
-            //t.setText(tToPrint);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-//    private ToyList readToyInfo() {
-//
-//        new Thread(new Runnable(){
-//            @Override
-//            public void run() {
-//                try {
-//                    Log.d("print", "About to read data in readToyInfo");
-//
-//                    URL url = new URL("http://people.cs.georgetown.edu/~wzhou/toy.data");
-//                    Log.d("print", "URL: "+url);
-//                    BufferedReader in = new BufferedReader(new InputStreamReader(url.openStream()));
-//
-//                    Log.d("print", "Created bufferedReader");
-//
-////            Read data into string first
-//            String inputLine;
-//            String allData="";
-//            while ((inputLine = in.readLine()) != null)
-//                allData.concat(inputLine);
-//            Log.d("print", "Read file" +allData);
-//            in.close();
-//
-////            Convert string to byte array
-//            Log.d("print", "Converting to byte array");
-//
-//            byte[] temp = allData.getBytes();
-//            Log.d("print", "Byte array "+temp);
-//
-//            ToyList toylist = new ToyList(temp, temp.length);
-//                    Log.d("print", "Created toylist! "+toylist);
-//
-//                    } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//
-//
-//            }
-//        }).start();
-//
-//        Log.d("print", "Done with thread. About to return toylist");
-//
-//        return toylist;
-//    }
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://cosc150.toy_store/http/host/path")
+        );
+        AppIndex.AppIndexApi.start(client, viewAction);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        Action viewAction = Action.newAction(
+                Action.TYPE_VIEW, // TODO: choose an action type.
+                "Main Page", // TODO: Define a title for the content shown.
+                // TODO: If you have web page content that matches this app activity's content,
+                // make sure this auto-generated web page URL is correct.
+                // Otherwise, set the URL to null.
+                Uri.parse("http://host/path"),
+                // TODO: Make sure this auto-generated app deep link URI is correct.
+                Uri.parse("android-app://cosc150.toy_store/http/host/path")
+        );
+        AppIndex.AppIndexApi.end(client, viewAction);
+        client.disconnect();
+    }
 }

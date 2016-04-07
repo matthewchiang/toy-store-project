@@ -48,30 +48,38 @@ public class ToyActivity extends AppCompatActivity {
     public static int numItemsInCart = 0;
     public static int priceOfItems = 0;
     public static ToyList selectedToys = new ToyList();
+    public static ToyList toyList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d("print", "In ToyActivity: oncreate");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_toy);
         LinearLayout linearLayout1 = (LinearLayout) findViewById(R.id.linearLayout1);
 
-        Log.d("print", "In ToyActivity: oncreate");
+        Intent intent = getIntent();
+        toyList = intent.getExtras().getParcelable("toylist");
+
+        Log.d("print", "Got the toyList where num toys is "+toyList.getNumOfToys());
 
 //        Read toy info
         //readToyInfo();
-
-        for (int i = 0; i < MainActivity.bitmapList.size(); i++) {
+//
+        for (int i = 0; i < toyList.getNumOfToys(); i++) {
+            Toy currToy = toyList.getToy(i);
             ImageView pic = new ImageView(this);
-            pic.setImageBitmap(MainActivity.bitmapList.get(i));
+            pic.setImageBitmap(currToy.getImage());
             pic.setOnLongClickListener(longListen);
             pic.setTag(i);
 
             TextView name = new TextView(this);
-            name.setText(MainActivity.toyNameList.get(i));
+            name.setText(currToy.getToyName());
             name.setTextSize(32);
 
             TextView price = new TextView(this);
-            price.setText("$" + Integer.toString(MainActivity.toyPriceList.get(i)));
+
+            price.setText("$" + Integer.toString(currToy.getPrice()));
             price.setTextSize(32);
 
 
@@ -100,7 +108,10 @@ public class ToyActivity extends AppCompatActivity {
         findViewById(R.id.checkoutButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ToyActivity.this, CheckoutActivity.class);
+                Intent intent = new Intent(getBaseContext(), CheckoutActivity.class);
+                intent.putExtra("selectedToyList", selectedToys);
+                Log.d("print", "Price of items: " +priceOfItems);
+                intent.putExtra("totalPrice", priceOfItems);
                 startActivity(intent);
             }
 
@@ -177,15 +188,15 @@ public class ToyActivity extends AppCompatActivity {
         Log.d("print", "tag is now " + tag);
         int toyNum = Integer.parseInt(tag);
         Log.d("print", "Toy number is " + toyNum);
-        Log.d("print", MainActivity.toyNameList.get(toyNum) + " costs " + MainActivity.toyPriceList.get(toyNum));
-        Toast.makeText(getApplicationContext(), MainActivity.toyNameList.get(toyNum) + " costs $" + MainActivity.toyPriceList.get(toyNum), Toast.LENGTH_SHORT).show();
+        Log.d("print", toyList.getToy(toyNum).getToyName() + " costs " + toyList.getToy(toyNum).getPrice());
+        Toast.makeText(getApplicationContext(), toyList.getToy(toyNum).getToyName() + " costs " + toyList.getToy(toyNum).getPrice(), Toast.LENGTH_SHORT).show();
 
-        Toy newToy = MainActivity.toyList.getToy(toyNum);
+        Toy newToy = toyList.getToy(toyNum);
         selectedToys.addToy(newToy);
 
         // Update price
         TextView priceView = (TextView) findViewById(R.id.shoppingCartPrice);
-        priceOfItems += MainActivity.toyPriceList.get(toyNum);
+        priceOfItems += toyList.getToy(toyNum).getPrice();
         priceView.setText("Price: $" + Integer.toString(priceOfItems));
 
         //Update number of items
@@ -248,7 +259,7 @@ public class ToyActivity extends AppCompatActivity {
             byte[] buffer = new byte[size]; //declare the size of the byte array with size of the file
             is.read(buffer); //read file
             is.close(); //close file
-            ToyList toyList = new ToyList(buffer, size);
+            toyList toyList = new toyList(buffer, size);
             System.out.println("There are " + toyList.getNumOfToys() + " toys.");
 
             for (int i = 0; i < toyList.getNumOfToys(); i++) {
@@ -306,7 +317,7 @@ public class ToyActivity extends AppCompatActivity {
 ////            file.close();
 //            Log.d("print", "Byte array "+temp);
 //
-//            toylist = new ToyList(temp, temp.length);
+//            toyList = new toyList(temp, temp.length);
 //
 //        } catch (MalformedURLException e1) {
 //            e1.printStackTrace();
