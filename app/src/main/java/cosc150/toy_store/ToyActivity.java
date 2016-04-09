@@ -45,10 +45,12 @@ import java.util.ArrayList;
 
 public class ToyActivity extends AppCompatActivity {
 
-    public static int numItemsInCart = 0;
-    public static int priceOfItems = 0;
-    public static ToyList selectedToys = new ToyList();
-    public static ToyList toyList;
+    int numItemsInCart = 0;
+    int priceOfItems = 0;
+    ToyList selectedToys = new ToyList();
+    ToyList toyList;
+    long searchItemID = 0;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +62,7 @@ public class ToyActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         toyList = intent.getExtras().getParcelable("toylist");
+        searchItemID = intent.getLongExtra("itemID", -1);
 
         Log.d("print", "Got the toyList where num toys is "+toyList.getNumOfToys());
 
@@ -88,20 +91,22 @@ public class ToyActivity extends AppCompatActivity {
             linearLayout1.addView(pic);
         }
 
+        if (searchItemID != -1) {
+            try {
+               addSearchToCart();
+            }
+            catch(Exception e) {
+                System.out.println("Cannot add item from search");
+            }
+        }
+
 
         findViewById(R.id.shoppingCartView).setOnDragListener(DropListener);
 
         findViewById(R.id.cancelButton).setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            numItemsInCart=0;
-            priceOfItems=0;
-            selectedToys.removeAllToys();
-
-            TextView resetItems = (TextView) findViewById(R.id.numItems);
-            resetItems.setText("Number of items: "+Integer.toString(numItemsInCart));
-            TextView resetPrice = (TextView) findViewById(R.id.shoppingCartPrice);
-            resetPrice.setText("Price: $" + Integer.toString(priceOfItems));
+            finish();
             }
         });
 
@@ -110,7 +115,7 @@ public class ToyActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), CheckoutActivity.class);
                 intent.putExtra("selectedToyList", selectedToys);
-                Log.d("print", "Price of items: " +priceOfItems);
+                Log.d("print", "Price of items: " + priceOfItems);
                 intent.putExtra("totalPrice", priceOfItems);
                 startActivity(intent);
             }
@@ -205,6 +210,27 @@ public class ToyActivity extends AppCompatActivity {
         numItems.setText("Number of items: " + Integer.toString(numItemsInCart));
 
     }
+
+    private void addSearchToCart() {
+        Toy searchToy = toyList.getToy((int) searchItemID);
+        numItemsInCart++;
+        priceOfItems += searchToy.getPrice();
+        selectedToys.addToy(searchToy);
+
+        TextView priceView = (TextView) findViewById(R.id.shoppingCartPrice);
+        priceView.setText("Price: $" + Integer.toString(priceOfItems));
+
+        //Update number of items
+        TextView numItems = (TextView) findViewById(R.id.numItems);
+        numItems.setText("Number of items: " + Integer.toString(numItemsInCart));
+
+        Toast.makeText(getApplicationContext(), searchToy.getToyName() + " costs " + searchToy.getPrice(), Toast.LENGTH_SHORT).show();
+
+    }
+
+
+
+
 
     //Log.d("print", "tag is " + tag);
     //tag = tag.replace("image", "");

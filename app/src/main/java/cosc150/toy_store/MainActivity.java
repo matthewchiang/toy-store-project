@@ -37,10 +37,9 @@ public class MainActivity extends AppCompatActivity {
     SearchView sv;
     ListView lv;
     ArrayAdapter<String> adapter;
-    public static ToyList toyList = null;
-    public static ArrayList<String> toyNameList = new ArrayList<String>();
-    public static ArrayList<Integer> toyPriceList = new ArrayList<Integer>();
-    public static ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
+    ToyList toyList = null;
+    ArrayList<String> toyNameList = new ArrayList<String>();
+    ArrayList<Bitmap> bitmapList = new ArrayList<Bitmap>();
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -88,7 +87,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Toast.makeText(getApplicationContext(), "Add items to basket in the next page", Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getBaseContext(), ToyActivity.class);
+                intent.putExtra("toylist", toyList);
+
+                intent.putExtra("itemID", id);
+                startActivity(intent);
+
 
             }
         });
@@ -156,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
 
 //                bitmapList.add(bmpCopy);
                 toyNameList.add(toyList.getToy(i).getToyName());
-//                toyPriceList.add(toyList.getToy(i).getPrice());
             }
 
         } catch (IOException e) {
