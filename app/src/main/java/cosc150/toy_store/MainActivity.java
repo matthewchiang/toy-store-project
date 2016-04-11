@@ -54,17 +54,15 @@ public class MainActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
-    MediaPlayer mySound;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        mySound = MediaPlayer.create(this, R.raw.jahzzartakemehigher);
-        mySound.start();
-        Log.d("print", "playing " + mySound.isPlaying());
-        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        MediaPlayer mp = MediaPlayer.create(this, R.raw.welcome);
+        mp.start();
+        AudioManager audioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
         audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 20, 0);
 
 //        Read toy info, stores in toyNameList, toyPriceList, and text boxes
