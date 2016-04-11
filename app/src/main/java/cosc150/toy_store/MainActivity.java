@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -52,21 +54,24 @@ public class MainActivity extends AppCompatActivity {
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    MediaPlayer mySound;
 
-
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mySound = MediaPlayer.create(this, R.raw.jahzzartakemehigher);
+        mySound.start();
+        Log.d("print", "playing " + mySound.isPlaying());
+        AudioManager audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 20, 0);
 
 //        Read toy info, stores in toyNameList, toyPriceList, and text boxes
         readToyInfo();
 
         String[] toyNamesArray = new String[toyNameList.size()];
         toyNamesArray = toyNameList.toArray(toyNamesArray);
-
-        Log.d("print", "Created toynamesarray");
 
 //        Set up the actionlisteners
         lv = (ListView) findViewById(R.id.toyListView);
@@ -96,7 +101,6 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(getBaseContext(), ToyActivity.class);
                 intent.putExtra("toylist", toyList);
-
                 intent.putExtra("itemID", id);
                 startActivity(intent);
 
@@ -132,10 +136,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void viewToysOnClick(View view) {
-        Log.d("print", "onclick");
         Intent intent = new Intent(getBaseContext(), ToyActivity.class);
         intent.putExtra("toylist", toyList);
-        Log.d("print", "Put the toylist in the intent");
         startActivity(intent);
 
     }
@@ -153,7 +155,6 @@ public class MainActivity extends AppCompatActivity {
                     URL url = new URL("http://people.cs.georgetown.edu/~wzhou/toy.data");
                     URLConnection urlconn = url.openConnection();
                     urlconn.connect();
-                    Log.d("print", "Connected to url");
                     int fileLength = urlconn.getContentLength();
 
                     is = urlconn.getInputStream();
@@ -166,12 +167,11 @@ public class MainActivity extends AppCompatActivity {
                     FileOutputStream fileOutputStream = new FileOutputStream(file);
 
                     int count;
-                    byte buffer[] = new byte[1024];
+                    byte buffer[] = new byte[fileLength];
 
                     while ((count = is.read(buffer, 0, buffer.length)) != -1)
                         fileOutputStream.write(buffer, 0, count);
 
-                    Log.d("print", "Buffer size " + buffer.length);
 
                     InputStream fileInputStream;
                     try {
@@ -179,20 +179,15 @@ public class MainActivity extends AppCompatActivity {
                         fileInputStream = new FileInputStream(file);
 
                         int fileInputLength = fileInputStream.available();
-                        Log.d("print", "fileInputLength " + fileInputLength);
                         byte[] fileBuffer = new byte[fileInputLength]; //declare the size of the byte array with size of the file
                         fileInputStream.read(fileBuffer); //read file
                         fileInputStream.close(); //close
-
-                        Log.d("print", "Buffer size of saved file" + fileBuffer.length);
                         toyList = new ToyList(fileBuffer, fileInputLength);
 
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
 
-
-                    Log.d("print", "There are " + toyList.getNumOfToys() + " toys.");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

@@ -39,7 +39,6 @@ public class Toy implements Parcelable {
         byte[] imageBuffer = new byte[imageLength];
         buffer.get(imageBuffer, 0, imageLength);
         Bitmap tmp = BitmapFactory.decodeByteArray(imageBuffer, 0, imageLength);
-//        this.image = tmp;
         this.image = Bitmap.createScaledBitmap(tmp, 180, 180, false);
 
         Log.d("print", "created a toy");

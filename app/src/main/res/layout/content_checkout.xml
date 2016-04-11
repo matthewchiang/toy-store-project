@@ -20,7 +20,7 @@
         android:id="@+id/completePurchaseTextView"
         android:textSize="30dp"
         android:textAlignment="center"
-        android:textColor="#470041"
+        android:textColor="#495fdf"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
