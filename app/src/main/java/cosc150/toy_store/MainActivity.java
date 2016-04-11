@@ -1,10 +1,12 @@
 package cosc150.toy_store;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -26,11 +28,16 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLClassLoader;
+import java.net.URLConnection;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
@@ -56,14 +63,14 @@ public class MainActivity extends AppCompatActivity {
 //        Read toy info, stores in toyNameList, toyPriceList, and text boxes
         readToyInfo();
 
-        String [] toyNamesArray = new String[toyNameList.size()];
+        String[] toyNamesArray = new String[toyNameList.size()];
         toyNamesArray = toyNameList.toArray(toyNamesArray);
 
         Log.d("print", "Created toynamesarray");
 
 //        Set up the actionlisteners
         lv = (ListView) findViewById(R.id.toyListView);
-        sv =  (SearchView) findViewById(R.id.toySearchView);
+        sv = (SearchView) findViewById(R.id.toySearchView);
 
 
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, toyNamesArray);
@@ -72,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         sv.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
 
             @Override
-            public boolean onQueryTextSubmit(String text){
+            public boolean onQueryTextSubmit(String text) {
                 return false;
             }
 
@@ -137,17 +144,69 @@ public class MainActivity extends AppCompatActivity {
     //reads info in, saves in ArrayLists
     private void readToyInfo() {
 
-        InputStream is = null;
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                InputStream is = null;
+
+                try {
+                    URL url = new URL("http://people.cs.georgetown.edu/~wzhou/toy.data");
+                    URLConnection urlconn = url.openConnection();
+                    urlconn.connect();
+                    Log.d("print", "Connected to url");
+                    int fileLength = urlconn.getContentLength();
+
+                    is = urlconn.getInputStream();
+
+                    //Make a new file and save it
+                    String filename = "/ToyDataFromURL.data";
+
+                    File file = new File(getFilesDir(), filename);
+
+                    FileOutputStream fileOutputStream = new FileOutputStream(file);
+
+                    int count;
+                    byte buffer[] = new byte[1024];
+
+                    while ((count = is.read(buffer, 0, buffer.length)) != -1)
+                        fileOutputStream.write(buffer, 0, count);
+
+                    Log.d("print", "Buffer size " + buffer.length);
+
+                    InputStream fileInputStream;
+                    try {
+                        //Open the file just created
+                        fileInputStream = new FileInputStream(file);
+
+                        int fileInputLength = fileInputStream.available();
+                        Log.d("print", "fileInputLength " + fileInputLength);
+                        byte[] fileBuffer = new byte[fileInputLength]; //declare the size of the byte array with size of the file
+                        fileInputStream.read(fileBuffer); //read file
+                        fileInputStream.close(); //close
+
+                        Log.d("print", "Buffer size of saved file" + fileBuffer.length);
+                        toyList = new ToyList(fileBuffer, fileInputLength);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+
+                    Log.d("print", "There are " + toyList.getNumOfToys() + " toys.");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        thread.start();
 
         try {
-            is = getAssets().open("toy.data");
-            int size = is.available();
-            byte[] buffer = new byte[size]; //declare the size of the byte array with size of the file
-            is.read(buffer); //read file
-            is.close(); //close file
-            toyList = new ToyList(buffer, size);
-            System.out.println("There are " + toyList.getNumOfToys() + " toys.");
-
+            thread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        if (!thread.isAlive()){
             for (int i = 0; i < toyList.getNumOfToys(); i++) {
 
                 Bitmap bmp = toyList.getToy(i).getImage();
@@ -158,14 +217,11 @@ public class MainActivity extends AppCompatActivity {
                 // To convert byte array to Bitmap
                 Bitmap bmpCopy = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
 
-//                bitmapList.add(bmpCopy);
                 toyNameList.add(toyList.getToy(i).getToyName());
             }
-
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
+
 
     @Override
     public void onStart() {
@@ -207,3 +263,4 @@ public class MainActivity extends AppCompatActivity {
         client.disconnect();
     }
 }
+

@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.design.internal.ParcelableSparseArray;
+import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -38,7 +39,10 @@ public class Toy implements Parcelable {
         byte[] imageBuffer = new byte[imageLength];
         buffer.get(imageBuffer, 0, imageLength);
         Bitmap tmp = BitmapFactory.decodeByteArray(imageBuffer, 0, imageLength);
+//        this.image = tmp;
         this.image = Bitmap.createScaledBitmap(tmp, 180, 180, false);
+
+        Log.d("print", "created a toy");
 
     }
 
